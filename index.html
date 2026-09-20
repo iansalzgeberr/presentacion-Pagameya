@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>PagameYa — Avances</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Tokens espejados de pagameya-mobile/src/theme.ts (main) */
+  :root{
+    --brand:#0B72E7; --brand-light:#1688EA; --navy:#183B78; --brand-sec:#477DBB;
+    --accent:#147A5A; --accent-bg:#E9F8F1; --accent-border:#BFE6CF;
+    --bg:#F5F8FC; --surface:#FFFFFF; --subtle:#EDF3F9;
+    --ink:#061B3A; --muted:#61708A; --tert:#8B99AA; --line:#DDE5F0;
+    --warn:#A65C18; --warn-bg:#FFF2E6;
+    --r-md:12px; --r-lg:16px; --r-xl:20px;
+    --sh-md:0 4px 16px rgba(6,27,58,.07);
+    --sh-brand:0 8px 16px rgba(24,59,120,.20);
+    --disp:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --brandfont:'Manrope',var(--disp);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--disp);color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .eyebrow{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+  section{padding:74px 0;border-bottom:1px solid var(--line)}
+  h2.sec{font-size:31px;font-weight:800;letter-spacing:-.03em;color:var(--ink);margin:8px 0 10px}
+  .sub{color:var(--muted);max-width:640px;margin-bottom:36px;font-size:15.5px}
+  em{color:var(--tert);font-style:normal}
+
+  /* Cue: la barra que nos guía en vivo (rol + tiempo del cronograma) */
+  .cue{display:inline-flex;align-items:center;gap:10px;background:var(--subtle);border:1px solid var(--line);
+       border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:18px}
+  .cue .who{color:var(--brand)}
+  .cue .sep{width:4px;height:4px;border-radius:50%;background:var(--tert)}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;background:rgba(245,248,252,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .navrow{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .nbrand img{height:26px;width:auto;display:block}
+  .nlinks{display:flex;gap:22px;font-size:14px;font-weight:600;color:var(--muted)}
+  .nlinks a:hover{color:var(--brand)}
+  @media(max-width:860px){.nlinks{display:none}}
+
+  /* HERO */
+  .hero{background:radial-gradient(1100px 460px at 78% -10%, rgba(11,114,231,.08), transparent 60%),var(--bg);border:none}
+  .hero .wrap{padding:76px 24px 80px}
+  .lockup{height:58px;width:auto;display:block;margin-bottom:26px}
+  .badge{display:inline-block;background:var(--subtle);color:var(--navy);font-weight:700;font-size:12px;letter-spacing:.06em;padding:7px 14px;border-radius:999px}
+  .hero h1{font-family:var(--brandfont);font-size:56px;font-weight:800;letter-spacing:-.04em;line-height:1.04;margin:20px 0 14px;color:var(--ink)}
+  .hero h1 b{color:var(--brand)}
+  .hero p.tag{font-size:19px;max-width:660px;color:var(--muted)}
+  .hero .meta{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
+  .pillmeta{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:600;box-shadow:var(--sh-md)}
+  .pillmeta b{color:var(--brand);font-weight:700}
+  @media(max-width:760px){.hero h1{font-size:38px}}
+
+  /* PROBLEMA / ACTUACIÓN */
+  .problema{background:var(--navy);color:#fff;border:none;position:relative;overflow:hidden}
+  .problema::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:rgba(11,114,231,.22)}
+  .problema .wrap{position:relative;z-index:2}
+  .problema .cue{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.18);color:#fff}
+  .problema .cue .who{color:#8FC0F5}
+  .problema .eyebrow{color:#8FC0F5}
+  .problema h2.sec{color:#fff;font-size:40px;max-width:760px}
+  .problema .sub{color:rgba(255,255,255,.8);max-width:620px}
+  .pains{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:6px}
+  @media(max-width:760px){.pains{grid-template-columns:1fr 1fr}}
+  .pain{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:var(--r-lg);padding:18px}
+  .pain .pic{font-size:24px;margin-bottom:8px}
+  .pain p{font-size:14px;color:rgba(255,255,255,.92);line-height:1.4}
+
+  /* EQUIPO */
+  .team{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
+  .member{flex:1 1 180px;max-width:208px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);padding:24px 18px;text-align:center;box-shadow:var(--sh-md);display:flex;flex-direction:column;align-items:center}
+  .member h3{min-height:2.6em;display:flex;align-items:center;justify-content:center}
+  .avatar{width:66px;height:66px;border-radius:50%;margin:0 auto 14px;background:var(--subtle);color:var(--brand);display:flex;align-items:center;justify-content:center;font-family:var(--brandfont);font-weight:800;font-size:22px;border:1px solid var(--line)}
+  .member h3{font-size:15px;font-weight:700;color:var(--ink)}
+  .member p{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  /* AVANCES — glanceable */
+  .avances{background:var(--surface)}
+  .hgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:860px){.hgrid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:620px){.hgrid{grid-template-columns:1fr 1fr}}
+  .hl{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 18px;transition:transform .16s,box-shadow .16s}
+  .hl:hover{transform:translateY(-3px);box-shadow:var(--sh-brand)}
+  .hl .ic{font-size:30px;line-height:1;margin-bottom:12px}
+  .hl h3{font-size:15.5px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+  .hl p{font-size:12.5px;color:var(--muted);margin-top:3px}
+
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+  @media(max-width:620px){.metrics{grid-template-columns:1fr}}
+  .metric{background:linear-gradient(135deg,var(--brand),var(--navy));color:#fff;border-radius:var(--r-xl);padding:24px;box-shadow:var(--sh-brand)}
+  .metric .n{font-family:var(--brandfont);font-size:40px;font-weight:800;line-height:1;letter-spacing:-.03em}
+  .metric .l{font-size:13.5px;margin-top:8px;opacity:.92;font-weight:600}
+
+  /* DEMO */
+  .demo{background:var(--subtle);text-align:center}
+  .demo .cue{margin-left:auto;margin-right:auto}
+  .demo-badge{font-family:var(--brandfont);font-weight:800;font-size:64px;letter-spacing:-.04em;color:var(--brand);line-height:1;margin:6px 0 6px}
+  .demo h2.sec{margin-top:0}
+  .demo .sub{margin-left:auto;margin-right:auto}
+  .checklist{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:6px}
+  .step{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:10px 16px;font-size:13.5px;font-weight:600;color:var(--ink);box-shadow:var(--sh-md)}
+  .step b{color:var(--brand);font-family:var(--brandfont);margin-right:6px}
+
+  /* PRÓXIMOS PASOS */
+  .goal{display:flex;align-items:center;gap:16px;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--r-xl);padding:20px 22px;margin-bottom:22px}
+  .goal .date{font-family:var(--brandfont);font-weight:800;font-size:22px;color:var(--accent);white-space:nowrap}
+  .goal p{font-size:14.5px;color:#1c4c3c}
+  .road{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:720px){.road{grid-template-columns:1fr}}
+  .rcol{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);padding:24px;box-shadow:var(--sh-md)}
+  .rcol .tag{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}
+  .rcol ul{list-style:none;margin-top:12px}
+  .rcol li{font-size:13.5px;padding:8px 0 8px 24px;position:relative;color:#25405e;border-top:1px solid var(--line)}
+  .rcol li:first-child{border-top:none}
+  .rcol li::before{content:"→";position:absolute;left:0;color:var(--brand);font-weight:800}
+
+  /* SUMATE / CTA */
+  .sumate{background:var(--surface)}
+  .cta-wrap{display:grid;grid-template-columns:220px 1fr;gap:36px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:24px;padding:34px;box-shadow:var(--sh-md)}
+  @media(max-width:680px){.cta-wrap{grid-template-columns:1fr;text-align:center;justify-items:center}}
+  .qr{width:200px;height:200px;border-radius:var(--r-lg);background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;padding:12px;box-shadow:var(--sh-md)}
+  .qr img{width:100%;height:100%;object-fit:contain}
+  .cta-txt h3{font-family:var(--brandfont);font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+  .cta-txt p{font-size:15px;color:var(--muted);margin-bottom:18px;max-width:460px}
+  .btns{display:flex;gap:12px;flex-wrap:wrap}
+  @media(max-width:680px){.btns{justify-content:center}}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;border-radius:14px;padding:13px 20px;cursor:pointer}
+  .btn.primary{background:var(--brand);color:#fff;box-shadow:var(--sh-brand)}
+  .btn.ghost{background:transparent;color:var(--brand);border:1.5px solid var(--brand)}
+
+  /* CIERRE / SLOGAN */
+  .cierre{background:var(--navy);color:#fff;border:none;text-align:center;padding:120px 0;position:relative;overflow:hidden}
+  .cierre::before{content:"";position:absolute;left:50%;top:-160px;transform:translateX(-50%);width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(11,114,231,.30),transparent 62%)}
+  .cierre .wrap{position:relative;z-index:2}
+  .cierre img{height:40px;margin-bottom:28px;opacity:.95}
+  .cierre h2{font-family:var(--brandfont);font-size:52px;font-weight:800;letter-spacing:-.04em;line-height:1.08}
+  .cierre h2 b{color:#8FC0F5}
+  .cierre .strike{color:rgba(255,255,255,.5);text-decoration:line-through;text-decoration-thickness:3px}
+  @media(max-width:760px){.cierre h2{font-size:34px}.cierre{padding:90px 0}}
+
+  /* MODO PRESENTACIÓN (deck) */
+  .present-btn{position:fixed;right:18px;bottom:18px;z-index:80;background:var(--brand);color:#fff;border:0;
+    font-family:var(--disp);font-size:14px;font-weight:700;border-radius:999px;padding:12px 18px;cursor:pointer;box-shadow:var(--sh-brand)}
+  .deckbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:80;display:none;align-items:center;gap:12px;
+    background:rgba(6,27,58,.85);color:#fff;border-radius:999px;padding:7px 12px;font-family:var(--brandfont);font-size:13px;font-weight:700;backdrop-filter:blur(6px)}
+  .deckbar button{background:transparent;border:0;color:#fff;font-size:20px;cursor:pointer;line-height:1;padding:0 6px}
+  .deckbar button:hover{color:#8FC0F5}
+  .deckbar .count{min-width:52px;text-align:center;letter-spacing:.06em}
+  .deckbar .x{font-size:14px}
+  html.deck{scroll-snap-type:y mandatory}
+  html.deck nav{display:none}
+  html.deck .present-btn{display:none}
+  html.deck .deckbar{display:flex}
+  html.deck footer{display:none}
+  html.deck .slide{min-height:100vh;scroll-snap-align:start;scroll-snap-stop:always;border-bottom:none;
+    display:flex;flex-direction:column;justify-content:safe center;overflow-y:auto;padding-top:60px;padding-bottom:76px}
+  @media print{.present-btn,.deckbar{display:none}}
+
+  /* FOOTER */
+  footer{background:var(--bg);color:var(--muted);padding:38px 0;border-top:1px solid var(--line);border-bottom:none}
+  .frow{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .fcol h5{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin-bottom:8px}
+  .fcol p{font-size:13px;line-height:1.6}
+  .fcol.uni{text-align:right}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap navrow">
+    <div class="nbrand"><img src="presentacion-assets/wordmark-blue.png" alt="PagameYa"></div>
+    <div class="nlinks">
+      <a href="#problema">Problema</a>
+      <a href="#equipo">Equipo</a>
+      <a href="#avances">Avances</a>
+      <a href="#demo">Demo</a>
+      <a href="#proximos">Próximos pasos</a>
+      <a href="#sumate">Sumate</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO / PORTADA -->
+<header class="hero slide" id="inicio">
+  <div class="wrap">
+    <img class="lockup" src="presentacion-assets/wordmark-blue.png" alt="PagameYa">
+    <span class="badge">Proyecto Final · Grupo 06 · UTN FRC · Avances</span>
+    <h1>Cuentas con amigos,<br><b>sin drama</b>.</h1>
+    <p class="tag">Deudas y gastos compartidos, sin vueltas.</p>
+    <div class="meta">
+      <div class="pillmeta">📱 <b>Android &amp; iOS</b></div>
+      <div class="pillmeta">💬 <b>WhatsApp</b></div>
+      <div class="pillmeta">💳 <b>Mercado Pago</b></div>
+      <div class="pillmeta">👥 <b>50</b> usuarios de prueba</div>
+    </div>
+  </div>
+</header>
+
+<!-- PROBLEMA / ACTUACIÓN -->
+<section class="problema slide" id="problema">
+  <div class="wrap">
+    <div class="cue">🎭 Abrimos con una actuación<span class="sep"></span><span class="who">Integrantes 1 y 2</span><span class="sep"></span>~2 min</div>
+    <span class="eyebrow">El problema</span>
+    <h2 class="sec">Prestar y cobrar entre conocidos siempre incomoda.</h2>
+    <div class="pains">
+      <div class="pain"><div class="pic">🧠</div><p>Se te olvida</p></div>
+      <div class="pain"><div class="pic">📄</div><p>El papel se pierde</p></div>
+      <div class="pain"><div class="pic">💬</div><p>El chat se mezcla</p></div>
+      <div class="pain"><div class="pic">😬</div><p>Nadie quiere reclamar</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPO -->
+<section class="slide" id="equipo">
+  <div class="wrap">
+    <div class="cue">👋 Presentación del equipo<span class="sep"></span><span class="who">Integrante 3</span><span class="sep"></span>~1,5 min</div>
+    <span class="eyebrow">Quiénes somos</span>
+    <h2 class="sec">El equipo</h2>
+    <div class="team">
+      <div class="member"><div class="avatar">AB</div><h3>Amadeo Bottiglieri</h3><p>Rol / responsabilidad</p></div>
+      <div class="member"><div class="avatar">JC</div><h3>Juan Cheli</h3><p>Rol / responsabilidad</p></div>
+      <div class="member"><div class="avatar">LL</div><h3>Leopoldo Lorenzo</h3><p>Rol / responsabilidad</p></div>
+      <div class="member"><div class="avatar">FS</div><h3>Francisco N. Saggiorato</h3><p>Rol / responsabilidad</p></div>
+      <div class="member"><div class="avatar">IS</div><h3>Ian Salzgeber</h3><p>Rol / responsabilidad</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- AVANCES -->
+<section id="avances" class="avances slide">
+  <div class="wrap">
+    <div class="cue">🚀 Avances del período<span class="sep"></span><span class="who">Integrante 4</span><span class="sep"></span>~5 min</div>
+    <span class="eyebrow">Lo nuevo</span>
+    <h2 class="sec">Lo que sumamos</h2>
+    <div class="hgrid">
+      <div class="hl"><div class="ic">📱</div><h3>Android y iOS</h3></div>
+      <div class="hl"><div class="ic">💬</div><h3>Asistente de WhatsApp</h3></div>
+      <div class="hl"><div class="ic">🤖</div><h3>IA para comprobantes</h3></div>
+      <div class="hl"><div class="ic">🎨</div><h3>Nueva UI</h3></div>
+      <div class="hl"><div class="ic">🔔</div><h3>Notificaciones</h3></div>
+      <div class="hl"><div class="ic">🐾</div><h3>Mascotas</h3></div>
+      <div class="hl"><div class="ic">🔁</div><h3>Pagos recurrentes</h3></div>
+      <div class="hl"><div class="ic">💳</div><h3>Mercado Pago</h3></div>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="n">50</div><div class="l">usuarios de prueba</div></div>
+      <div class="metric"><div class="n">2</div><div class="l">Android + iOS</div></div>
+      <div class="metric"><div class="n">1</div><div class="l">grupo de feedback</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" class="demo slide">
+  <div class="wrap">
+    <div class="cue">📱 Demo en vivo<span class="sep"></span><span class="who">Integrante 5</span><span class="sep"></span>~5 min</div>
+    <div class="demo-badge">DEMO</div>
+    <h2 class="sec">Lo mostramos funcionando</h2>
+    <div class="checklist">
+      <div class="step"><b>1</b>Crear grupo / evento</div>
+      <div class="step"><b>2</b>Cargar un gasto (o foto del ticket)</div>
+      <div class="step"><b>3</b>Dividir y ver balances</div>
+      <div class="step"><b>4</b>Recordatorio por WhatsApp</div>
+      <div class="step"><b>5</b>Saldar con Mercado Pago</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRÓXIMOS PASOS -->
+<section class="slide" id="proximos">
+  <div class="wrap">
+    <div class="cue">🧭 Próximos pasos<span class="sep"></span><span class="who">Integrante 1</span><span class="sep"></span>~2 min</div>
+    <span class="eyebrow">Hacia dónde vamos</span>
+    <h2 class="sec">Rumbo al 6 de octubre</h2>
+    <div class="goal">
+      <div class="date">6 OCT</div>
+      <p>App <b>robusta y en producción</b> — Android y iOS, no solo en test.</p>
+    </div>
+    <div class="road">
+      <div class="rcol"><span class="tag">Testear</span><ul><li>Más usuarios reales</li><li>Escuchar feedback</li></ul></div>
+      <div class="rcol"><span class="tag">Debuggear</span><ul><li>Corregir errores</li><li>Estabilizar y pulir</li></ul></div>
+      <div class="rcol"><span class="tag">Desplegar</span><ul><li>Play Store y App Store</li><li>Lista para producción</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- SUMATE / CTA -->
+<section id="sumate" class="sumate slide">
+  <div class="wrap">
+    <span class="eyebrow">Sumate</span>
+    <h2 class="sec">Sé parte de PagameYa</h2>
+    <div class="cta-wrap">
+      <div class="qr">
+        <img src="presentacion-assets/qr-whatsapp.png" alt="QR del grupo de WhatsApp">
+      </div>
+      <div class="cta-txt">
+        <h3>Escaneá y sumate 👇</h3>
+        <p>Probá la app y dejanos tu feedback.</p>
+        <div class="btns">
+          <a class="btn primary" href="https://chat.whatsapp.com/DFMXpnwF3YC8mG11nbrkVQ?s=cl&amp;p=i&amp;mlu=4&amp;ilr=4" target="_blank" rel="noopener">💬 Grupo de WhatsApp</a>
+          <a class="btn ghost" href="#">📲 Descargar la app</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CIERRE / SLOGAN -->
+<section class="cierre slide">
+  <div class="wrap">
+    <img src="presentacion-assets/mark-white.png" alt="PagameYa">
+    <h2>Se acabó el <span class="strike">"pagame después"</span>.<br>Llegó <b>PagameYa</b>.</h2>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap frow">
+    <div class="fcol">
+      <h5>Equipo · Grupo 06</h5>
+      <p>Bottiglieri, Amadeo · Cheli, Juan · Lorenzo, Leopoldo<br>Saggiorato, Francisco Nicolás · Salzgeber, Ian</p>
+    </div>
+    <div class="fcol">
+      <h5>Docentes</h5>
+      <p>Ing. Ortiz, Cecilia · Ing. Mac William, María Irene<br>Ing. D'Agostino, José Luis</p>
+    </div>
+    <div class="fcol uni">
+      <h5>Proyecto Final · 2026</h5>
+      <p><strong>Universidad Tecnológica Nacional</strong><br>Facultad Regional Córdoba · Ing. en Sistemas de Información</p>
+    </div>
+  </div>
+</footer>
+
+<button id="presentBtn" class="present-btn">▶ Presentar</button>
+<div class="deckbar">
+  <button id="deckPrev" title="Anterior (←)">‹</button>
+  <span class="count" id="deckCount">1 / 8</span>
+  <button id="deckNext" title="Siguiente (→)">›</button>
+  <button id="deckExit" class="x" title="Salir (Esc)">✕</button>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var countEl=document.getElementById('deckCount');
+  var idx=0;
+  function nearest(){ // slide que ocupa el centro del viewport
+    var mid=(window.scrollY||root.scrollTop)+window.innerHeight/2,best=0,bd=1e9;
+    slides.forEach(function(s,i){var c=s.offsetTop+s.offsetHeight/2,d=Math.abs(c-mid);if(d<bd){bd=d;best=i;}});
+    return best;
+  }
+  function paint(){ countEl.textContent=(idx+1)+' / '+slides.length; }
+  function go(i){ idx=Math.max(0,Math.min(slides.length-1,i)); try{window.scrollTo({top:slides[idx].offsetTop,behavior:'instant'});}catch(_){window.scrollTo(0,slides[idx].offsetTop);} paint(); }
+  function enter(){ root.classList.add('deck'); if(root.requestFullscreen){root.requestFullscreen().catch(function(){});} idx=nearest(); setTimeout(function(){go(idx);},60); }
+  function exit(){ root.classList.remove('deck'); if(document.fullscreenElement&&document.exitFullscreen){document.exitFullscreen().catch(function(){});} }
+  document.addEventListener('keydown',function(e){
+    if(!root.classList.contains('deck')){ if(e.key==='f'||e.key==='F'){enter();} return; }
+    if(['ArrowRight','ArrowDown','PageDown',' '].indexOf(e.key)>=0){e.preventDefault();go(idx+1);}
+    else if(['ArrowLeft','ArrowUp','PageUp'].indexOf(e.key)>=0){e.preventDefault();go(idx-1);}
+    else if(e.key==='Escape'){exit();}
+    else if(e.key==='Home'){e.preventDefault();go(0);}
+    else if(e.key==='End'){e.preventDefault();go(slides.length-1);}
+  });
+  var t;
+  document.addEventListener('scroll',function(){ // si scrollean a mano, seguimos el índice
+    clearTimeout(t);t=setTimeout(function(){idx=nearest();paint();},120);
+  },{passive:true});
+  document.addEventListener('fullscreenchange',function(){ if(!document.fullscreenElement){root.classList.remove('deck');} });
+  document.getElementById('presentBtn').addEventListener('click',enter);
+  document.getElementById('deckPrev').addEventListener('click',function(){go(idx-1);});
+  document.getElementById('deckNext').addEventListener('click',function(){go(idx+1);});
+  document.getElementById('deckExit').addEventListener('click',exit);
+  paint();
+})();
+</script>
+
+</body>
+</html>
